@@ -53,6 +53,13 @@ inline void normalizeAngles(QAngle& angle) {
 		angle.y += 360.f;
 }
 
+inline void sanitizeAngles(QAngle& angle) {
+    normalizeAngles(angle);
+    angle.x = std::clamp(angle.x, -89.0f, 89.0f);
+    angle.y = std::clamp(angle.y, -180.0f, 180.0f);
+    angle.z = 0.0f;
+}
+
 inline QAngle calcAngle(const Vector& src, const Vector& dst) {
 	QAngle vAngle;
 	Vector delta((src.x - dst.x), (src.y - dst.y), (src.z - dst.z));
@@ -74,6 +81,22 @@ inline void angleVectors(const QAngle &angles, Vector& forward) {
 	forward.z = -sin(DEG2RAD(angles.x));
 }
 
+inline void vectorAngles(const Vector& vec, QAngle& angles) {
+    float pitch, yaw;
+    if (!(vec.x || vec.y)) {
+        pitch = vec.z > 0 ? 270.f : 90.f;
+        yaw = 0.f;
+    } else {
+        pitch = atan2f(-vec.z, vec.Length2D()) * 180.f / M_PI;
+        if (pitch < 0.f) pitch += 360.f;
+        yaw = atan2f(vec.y, vec.x) * 180.f / M_PI;
+        if (yaw < 0.f) yaw += 360.f;
+    }
+    angles.x = pitch;
+    angles.y = yaw;
+    angles.z = 0.f;
+}
+
 inline float getDistance(Vector pos1, Vector pos2) {
     // Do 3d pythag
     float a = abs(pos1.x-pos2.x);
@@ -89,6 +112,38 @@ inline float getDistanceNoSqrt(Vector pos1, Vector pos2) {
     float b = abs(pos1.y-pos2.y);
     float c = abs(pos1.z-pos2.z);
     return pow(a, 2.f) + pow(b, 2.f) + pow(c, 2.f);
+}
+
+inline Vector2D anglePixels(QAngle angDelta) {
+	static ConVar* sensitivity = Interfaces::convar->FindVar("sensitivity");
+	static ConVar* m_yaw = Interfaces::convar->FindVar("m_yaw");
+	static ConVar* m_pitch = Interfaces::convar->FindVar("m_pitch");
+
+	sanitizeAngles(angDelta);
+
+	float pixelMovePitch = (-angDelta.x) / (m_pitch->GetFloat() * sensitivity->GetFloat());
+	float pixelMoveYaw = (angDelta.y) / (m_yaw->GetFloat() * sensitivity->GetFloat());
+
+	return Vector2D(pixelMoveYaw, pixelMovePitch);
+}
+
+inline Vector2D anglePixels(QAngle angBegin, QAngle angEnd) {
+	return anglePixels(angBegin - angEnd);
+}
+
+inline QAngle pixelAngles(Vector2D vecPixels) {
+	static ConVar* sensitivity = Interfaces::convar->FindVar("sensitivity");
+	static ConVar* m_yaw = Interfaces::convar->FindVar("m_yaw");
+	static ConVar* m_pitch = Interfaces::convar->FindVar("m_pitch");
+
+	float pitch = (-vecPixels.y) * (m_pitch->GetFloat() * sensitivity->GetFloat());
+	float yaw = (vecPixels.x) * (m_yaw->GetFloat() * sensitivity->GetFloat());
+
+	return QAngle(pitch, yaw, 0.f);
+}
+
+inline QAngle pixelAngles(float x, float y) {
+	return pixelAngles(Vector2D(x, y));
 }
 
 bool worldToScreen(const Vector& origin, Vector& screen);

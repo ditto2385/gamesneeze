@@ -65,9 +65,12 @@ public:
 		return getVirtualFunc<Fn>(this, 157)(this);
 	}
 
+	NETVAR("DT_BaseCombatCharacter", "m_flNextAttack", nextAttack, float);
 	NETVAR("DT_BaseEntity", "m_Collision", collideable, ICollideable);
+	NETVAR("DT_BaseEntity", "m_flSimulationTime", simtime, float);
 	NETVAR("DT_BaseEntity", "m_iTeamNum", team, int);
-	NETVAR("DT_BaseEntity", "m_bSpotted", spotted, bool);
+	NETVAR("DT_BaseEntity", "m_bSpotted", spotted, bool);	
+	NETVAR("DT_BaseViewModel", "m_nModelIndex", modelIndex, int);	
 };
 
 class Player : public Entity {
@@ -80,6 +83,7 @@ public:
 	NETVAR("DT_BasePlayer", "m_aimPunchAngle", aimPunch, QAngle);
 	NETVAR("DT_BasePlayer", "m_viewPunchAngle", viewPunch, QAngle);
 	NETVAR("DT_CSPlayer", "m_hActiveWeapon", activeWeapon, void*);
+	NETVAR("DT_BaseCombatCharacter", "m_hMyWeapons", getWeapons, int);
 	NETVAR("DT_CSPlayer", "m_hObserverTarget", observerTarget, Player*);
 	NETVAR("DT_CSPlayer", "m_bHasDefuser", defuser, bool);
 	NETVAR("DT_BasePlayer", "m_vecViewOffset[0]", viewOffset, Vector);
@@ -92,6 +96,8 @@ public:
 	NETVAR("DT_CSPlayer", "m_bHasHelmet", helmet, bool);
 	NETVAR("DT_CSPlayer", "m_ArmorValue", armor, int);
 	NETVAR("DT_CSPlayer", "m_nSurvivalTeam", survivalTeam, int);
+	NETVAR("DT_CSPlayer", "m_bGunGameImmunity", hasImmunity, bool);
+	NETVAR("DT_BasePlayer", "m_hViewModel[0]", viewmodel, void*);
 
 	AnimState* animState() {
 		return *reinterpret_cast<AnimState **>((uintptr_t)
@@ -131,6 +137,7 @@ public:
 	bool getAnythingBones(matrix3x4_t* boneMatrix);
 	Vector getBonePos(int bone);
 	bool visible();
+	bool canShoot();
 };
 
 class Item : public Entity{
@@ -147,6 +154,9 @@ public:
 	NETVAR("DT_BaseCombatWeapon", "m_nFallbackPaintKit", paintKit, int);
 	NETVAR("DT_BaseCombatWeapon", "m_flFallbackWear", wear, float);
 	NETVAR("DT_BaseCombatWeapon", "m_nFallbackStatTrak", statTrack, int);
+	NETVAR("DT_BaseCombatWeapon", "m_iClip1", ammo, int);
+    NETVAR("DT_BaseCombatWeapon", "m_flNextPrimaryAttack", nextPrimaryAttack, float);
+    NETVAR("DT_WeaponCSBase", "m_flPostponeFireReadyTime", fireReadyTime, float);
 
 	float GetSpread() {
 		typedef float (*Fn)(void*);

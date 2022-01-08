@@ -17,7 +17,20 @@ bool Hooks::CreateMove::hook(void* thisptr, float flInputSampleTime, CUserCmd* c
             if (mat_postprocess_enable) {
                 mat_postprocess_enable->SetValue(!CONFIGBOOL("Misc>Misc>Misc>Disable Post Processing"));
             }
+            Features::PotatoMode::createMove();
+            Features::ViewModelXYZ::createMove();
         }
+
+        Features::Movement::rageAutoStrafe(cmd);
+
+        // Seems after latest update game isn't setting mousedx or mousedy anymore
+        // but I use mousedx/y for some shit in legitbot so let's just set it real quick
+        auto pixels = anglePixels(Globals::oldViewangles, cmd->viewangles);
+        short bak_mdx, bak_mdy;
+        bak_mdx = cmd->mousedx;
+        bak_mdy = cmd->mousedy;
+        cmd->mousedx = pixels.x;
+        cmd->mousedy = pixels.y;
 
         startMovementFix(cmd);
             Features::RankReveal::createMove(cmd);
@@ -57,12 +70,21 @@ bool Hooks::CreateMove::hook(void* thisptr, float flInputSampleTime, CUserCmd* c
         cmd->sidemove = std::clamp(cmd->sidemove, -450.0f, 450.0f);
         cmd->upmove = std::clamp(cmd->upmove, -320.0f, 320.0f);
 
-        normalizeAngles(cmd->viewangles);
-        cmd->viewangles.x = std::clamp(cmd->viewangles.x, -89.0f, 89.0f);
-        cmd->viewangles.y = std::clamp(cmd->viewangles.y, -180.0f, 180.0f);
-        cmd->viewangles.z = 0.0f;
+        // Seems after latest update game isn't setting mousedx or mousedy anymore, so let's
+        // just keep it that way
+        cmd->mousedx = bak_mdx;  // should be 0
+        cmd->mousedy = bak_mdy;  // should also be 0
+
+        if (CONFIGBOOL("Legit>Misc>TrustFacMeme")) {
+            auto pixels = anglePixels(Globals::oldViewangles, cmd->viewangles);
+            //cmd->mousedx = pixels.x;
+            //cmd->mousedy = pixels.y;
+            cmd->viewangles = Globals::oldViewangles - pixelAngles(pixels);
+        }
+        sanitizeAngles(cmd->viewangles);
 
         Globals::oldViewangles = cmd->viewangles;
+        Globals::firedLast = cmd->buttons & IN_ATTACK;
     }
 
     return !(CONFIGBOOL("Rage>Enabled")); // return false when we want to do silent angles for rb

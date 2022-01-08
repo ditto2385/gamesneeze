@@ -13,6 +13,7 @@ namespace Features {
         void draw();
     }
     namespace Chams {
+        bool createMaterials();
         void drawModelExecute(void* thisptr, void* ctx, const DrawModelState_t &state, const ModelRenderInfo_t &pInfo, matrix3x4_t *pCustomBoneToWorld);
     }
     namespace AutoDefuse {
@@ -42,16 +43,19 @@ namespace Features {
             int playerFlags;
             float playerVelocity;
             Vector playerHeadPos;
+            Vector playerOrigin;
+            float playerSimTime;
         };
 
-        struct BackTrackTick {
+        struct BacktrackTick {
             std::map<int, BacktrackPlayer> players;
             int tickCount;
         };
 
         inline int lastBacktrack;
-        inline std::vector<BackTrackTick> backtrackTicks;
+        inline std::vector<BacktrackTick> backtrackTicks;
 
+        bool isRecordValid(float simtime);
         void store(CUserCmd* cmd);
         void createMove(CUserCmd* cmd);
     }
@@ -93,6 +97,7 @@ namespace Features {
         void createMove(CUserCmd *cmd);
     }
     namespace Triggerbot {
+        int getHitChance(QAngle viewAngles);
         void createMove(CUserCmd* cmd);
     }
     namespace RageBot {
@@ -139,6 +144,13 @@ namespace Features {
         void prePredCreateMove(CUserCmd* cmd);
         void postPredCreateMove(CUserCmd* cmd);
         void edgeBugPredictor(CUserCmd* cmd);
+        void rageAutoStrafe(CUserCmd* cmd);
         void draw();
+    }
+    namespace ViewModelXYZ {
+        void createMove();
+    }
+    namespace PotatoMode {
+        void createMove();
     }
 }

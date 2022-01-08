@@ -37,6 +37,10 @@ void Menu::drawMiscTab() {
                 ImGui::Checkbox("Use Spam", &CONFIGBOOL("Misc>Misc>Misc>Use Spam"));
                 ImGui::Checkbox("Disable Setting Cvars", &CONFIGBOOL("Misc>Misc>Misc>Disable Setting Cvars"));
                 ImGui::Checkbox("Disable Post Processing", &CONFIGBOOL("Misc>Misc>Misc>Disable Post Processing"));
+                ImGui::Checkbox("Potato Mode", &CONFIGBOOL("Misc>Misc>Misc>Potato Mode"));
+                if(CONFIGBOOL("Misc>Misc>Misc>Potato Mode")) {
+                    ImGui::SliderInt("how many potate", &CONFIGINT("Misc>Misc>Misc>Potato Amount"), -10, 10);
+                }
                 ImGui::EndChild();
             }
 
@@ -125,6 +129,20 @@ void Menu::drawMiscTab() {
                     ImGui::SameLine();
                 }
                 ImGui::Checkbox("EdgeBug", &CONFIGBOOL("Misc>Misc>Movement>EdgeBug"));
+                if (CONFIGBOOL("Misc>Misc>Movement>EdgeBug")) {
+                    ImGui::Text("EdgeBug TotalPredCap");
+                    ImGui::SetNextItemWidth(ImGui::GetWindowContentRegionWidth());
+                    ImGui::SliderInt("##Edgebug TotalPredCap", &CONFIGINT("Misc>Misc>Movement>EdgeBug TotalPredCap"), 1, 256);
+                    ImGui::Text("EdgeBug SinglePredCap");
+                    ImGui::SetNextItemWidth(ImGui::GetWindowContentRegionWidth());
+                    ImGui::SliderInt("##Edgebug SinglePredCap", &CONFIGINT("Misc>Misc>Movement>EdgeBug SinglePredCap"), 1, 256);
+                }
+                if (CONFIGBOOL("Misc>Misc>Movement>RageAutoStrafe")) {
+                    static bool toggled = false;
+                    Menu::CustomWidgets::drawKeyBinder("Key", &CONFIGINT("Misc>Misc>Movement>RageAutoStrafe Key"), &toggled);
+                    ImGui::SameLine();
+                }
+                ImGui::Checkbox("Rage AutoStrafe (blatant)", &CONFIGBOOL("Misc>Misc>Movement>RageAutoStrafe"));
                 ImGui::Checkbox("Fast Duck", &CONFIGBOOL("Misc>Misc>Movement>Fast Duck"));
                 ImGui::SameLine();
                 ImGui::TextDisabled("?");
@@ -135,12 +153,20 @@ void Menu::drawMiscTab() {
             ImGui::Columns(1);
             ImGui::TextDisabled("Credits!");
             if (ImGui::IsItemHovered())
-                ImGui::SetTooltip("sekc (of course)\nAll other contributors on GitHub (xXx-sans-xXx, luk1337, cristeigabriel, crazily, dave (@dweee), keenan, u2ooS, tango1337, nigma1337, vampur, all and any other contributors, and allbombson)\nand ocornut for his great ImGui UI framework");
+                ImGui::SetTooltip("sekc (ofcourse)\nAll other contributors on GitHub (xXx-sans-xXx, luk1337, cristeigabriel, crazily, dave (@dweee), keenan, u2ooS, tango1337, allbombson, nigma1337, vampur, and all the other contributors)\nand ocornut for his great ImGui UI framework");
             ImGui::EndTabItem();
         }
 
         if (ImGui::BeginTabItem("Skins")) {
             static ItemIndex curWeaponSelected = ItemIndex::WEAPON_AK47;
+            if (Interfaces::engine->IsInGame() && Globals::localPlayer && Globals::localPlayer->health()) {
+                Weapon* curWeapon =
+                     (Weapon*)Interfaces::entityList->GetClientEntity((uintptr_t)Globals::localPlayer->activeWeapon() & 0xFFF);
+                if (curWeapon && curWeapon->itemIndex() != ItemIndex::INVALID) {
+                    curWeaponSelected = curWeapon->itemIndex();
+                    Log::log(LOG, "current weapon itemIndex = %i", curWeapon->itemIndex());
+                }
+            }
             if (ImGui::BeginCombo("Weapon", itemIndexMap.at(curWeaponSelected))) {
                 for (auto item : itemIndexMap) {
                     if (item.first != ItemIndex::INVALID) {

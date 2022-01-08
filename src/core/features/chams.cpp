@@ -21,18 +21,16 @@ IMaterial* createMaterial(const char* materialName, const char* materialType, co
 	return Interfaces::materialSystem->CreateMaterial(materialName, keyValues);
 }
 
-void createMaterials() {
-    static bool init;
-    if (!init) {
-        shadedMaterial = Interfaces::materialSystem->FindMaterial("debug/debugambientcube", 0);
-        flatMaterial = Interfaces::materialSystem->FindMaterial("debug/debugdrawflat", 0);
-        pulseMaterial = Interfaces::materialSystem->FindMaterial("dev/screenhighlight_pulse", 0);
-        energyBallMaterial = Interfaces::materialSystem->FindMaterial("effects/energyball", 0);
-        plasticMaterial = Interfaces::materialSystem->FindMaterial("models/inventory_items/trophy_majors/gloss", 0);
-        darudeMaterial = Interfaces::materialSystem->FindMaterial("models/inventory_items/music_kit/darude_01/mp3_detail", 0);
+bool Features::Chams::createMaterials() {
+    shadedMaterial = Interfaces::materialSystem->FindMaterial("debug/debugambientcube", 0);
+    flatMaterial = Interfaces::materialSystem->FindMaterial("debug/debugdrawflat", 0);
+    pulseMaterial = Interfaces::materialSystem->FindMaterial("dev/screenhighlight_pulse", 0);
+    energyBallMaterial = Interfaces::materialSystem->FindMaterial("effects/energyball", 0);
+    plasticMaterial = Interfaces::materialSystem->FindMaterial("models/inventory_items/trophy_majors/gloss", 0);
+    darudeMaterial = Interfaces::materialSystem->FindMaterial("models/inventory_items/music_kit/darude_01/mp3_detail", 0);
 
-        glowMaterial = createMaterial("glow", "VertexLitGeneric",
-        R"#("VertexLitGeneric" {
+    glowMaterial = createMaterial("glow", "VertexLitGeneric",
+                                  R"#("VertexLitGeneric" {
             "$additive" "1"
             "$envmap" "models/effects/cube_white"
             "$envmaptint" "[1 1 1]"
@@ -41,8 +39,8 @@ void createMaterials() {
             "$alpha" "0.8"
         })#");
 
-        oilMaterial = createMaterial("pearlescent", "VertexLitGeneric",
-        R"#("VertexLitGeneric"
+    oilMaterial = createMaterial("pearlescent", "VertexLitGeneric",
+                                 R"#("VertexLitGeneric"
         {
             "$basetexture" "vgui/white_additive"
             "$nocull" "1"
@@ -55,8 +53,8 @@ void createMaterials() {
             "$pearlescent" "6"
         })#");
 
-        init = true;
-    }
+    return (shadedMaterial && flatMaterial && pulseMaterial && energyBallMaterial && plasticMaterial && darudeMaterial &&
+            glowMaterial && oilMaterial);
 }
 
 void cham(void* thisptr, void* ctx, const DrawModelState_t &state, const ModelRenderInfo_t &pInfo, matrix3x4_t *pCustomBoneToWorld, ImColor color, int mat, bool ignoreZ, bool wireframe = false) {
@@ -106,7 +104,7 @@ void chamPlayer(void* thisptr, void* ctx, const DrawModelState_t &state, const M
                     if (Features::Backtrack::backtrackTicks.size() > 2) {
                         if (CONFIGINT("Visuals>Players>Enemies>Chams>Backtrack Material")) {
                             if (CONFIGBOOL("Visuals>Players>Enemies>Chams>Trail")) {
-                                for (Features::Backtrack::BackTrackTick tick : Features::Backtrack::backtrackTicks) {
+                                for (Features::Backtrack::BacktrackTick tick : Features::Backtrack::backtrackTicks) {
                                     if (tick.tickCount % 2 == 0) { // only draw every other tick to reduce lag
                                         if (tick.players.find(p->index()) != tick.players.end()) {
                                             if (abs((tick.players.at(p->index()).playerHeadPos - p->getBonePos(8)).Length()) > 2) {
@@ -117,10 +115,15 @@ void chamPlayer(void* thisptr, void* ctx, const DrawModelState_t &state, const M
                                 }
                             }
                             else {
-                                Features::Backtrack::BackTrackTick tick = Features::Backtrack::backtrackTicks.at(Features::Backtrack::backtrackTicks.size()-1);
-                                if (tick.players.find(p->index()) != tick.players.end()) {
-                                    if (abs((tick.players.at(p->index()).playerHeadPos - p->getBonePos(8)).Length()) > 2) {
-                                        cham(thisptr, ctx, state, pInfo, tick.players.at(p->index()).boneMatrix, CONFIGCOL("Visuals>Players>Enemies>Chams>Backtrack Color"), CONFIGINT("Visuals>Players>Enemies>Chams>Backtrack Material"), false);
+                                for(int i = Features::Backtrack::backtrackTicks.size()-1; i > 0; i--) {
+                                    auto tick = Features::Backtrack::backtrackTicks.at(i);
+                                    if (tick.players.find(p->index()) != tick.players.end()) {
+                                        if (abs((tick.players.at(p->index()).playerHeadPos - p->getBonePos(8)).Length()) > 2) {
+                                            cham(thisptr, ctx, state, pInfo, tick.players.at(p->index()).boneMatrix,
+                                                 CONFIGCOL("Visuals>Players>Enemies>Chams>Backtrack Color"),
+                                                 CONFIGINT("Visuals>Players>Enemies>Chams>Backtrack Material"), false);
+                                        }
+                                        break;
                                     }
                                 }
                             }
@@ -180,7 +183,7 @@ void chamWeapon(void* thisptr, void* ctx, const DrawModelState_t &state, const M
 }
 
 void Features::Chams::drawModelExecute(void* thisptr, void* ctx, const DrawModelState_t &state, const ModelRenderInfo_t &pInfo, matrix3x4_t *pCustomBoneToWorld) {
-    createMaterials();
+    //createMaterials();
 
 	const char* modelName = Interfaces::modelInfo->GetModelName(pInfo.pModel);
 	if (strstr(modelName, "models/player") && !strstr(modelName, "shadow")) {
