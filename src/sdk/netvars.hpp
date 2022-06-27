@@ -87,7 +87,7 @@ namespace Offsets {
 
     inline uintptr_t radarIsHltvCheck;
 
-    typedef void (*InitKeyValues)(KeyValues*, const char*);
+    typedef void (*InitKeyValues)(KeyValues*, const char*, int, int);
     inline InitKeyValues initKeyValues;
 
     typedef void (*LoadFromBuffer)(KeyValues*, const char*, const char*, void*, const char*, void*);
