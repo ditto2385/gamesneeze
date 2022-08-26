@@ -8,12 +8,12 @@ void Features::SkinChanger::frameStageNotify(FrameStage frame) {
              (Weapon*)Interfaces::entityList->GetClientEntity((uintptr_t)Globals::localPlayer->activeWeapon() & 0xFFF);
         if (curWeapon && curWeapon->itemIndex() != ItemIndex::INVALID) {
             if (curWeapon->clientClass()->m_ClassID == CKnife) {
-                *curWeapon->modelIndex_ptr() = Interfaces::modelInfo->GetModelIndex("models/weapons/v_knife_css.mdl");
-                *curWeapon->itemIndex_ptr() = WEAPON_KNIFE_CSS;
+                *curWeapon->modelIndex_ptr() = Interfaces::modelInfo->GetModelIndex("models/weapons/v_knife_butterfly.mdl");
+                *curWeapon->itemIndex_ptr() = WEAPON_KNIFE_BUTTERFLY;
                 Entity* viewmodel =
                      (Entity*)Interfaces::entityList->GetClientEntity((uintptr_t)Globals::localPlayer->viewmodel() & 0xFFF);
                 if (!viewmodel) return;
-                *viewmodel->modelIndex_ptr() = Interfaces::modelInfo->GetModelIndex("models/weapons/v_knife_css.mdl");
+                *viewmodel->modelIndex_ptr() = Interfaces::modelInfo->GetModelIndex("models/weapons/v_knife_butterfly.mdl");
             }
         }
         for (size_t i = 0; Globals::localPlayer->getWeapons_ptr()[i] != (int)0xFFFFFFFF; i++) {
