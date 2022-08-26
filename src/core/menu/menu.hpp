@@ -17,7 +17,6 @@ namespace Menu {
     inline char clantag[128] = "gamesneeze";
     void drawMenu();
     void drawLegitTab();
-    void drawRageTab();
     void drawVisualsTab();
     void drawMiscTab();
     void drawDevWindow();

@@ -151,11 +151,6 @@ void Menu::drawMenu() {
         Menu::tabSelected = 0;
     } ImGui::SameLine();
 
-    ImGui::GetStyle().Colors[ImGuiCol_Button] = (Menu::tabSelected == 1) ? ImVec4(0.05f, 0.41f, 0.06f, 0.62f) : ImVec4(0.03f, 0.23f, 0.04f, 0.62f);
-    if (ImGui::Button("Rage", bWidth)) {
-        Menu::tabSelected = 1;
-    } ImGui::SameLine();
-
     ImGui::GetStyle().Colors[ImGuiCol_Button] = (Menu::tabSelected == 2) ? ImVec4(0.05f, 0.41f, 0.06f, 0.62f) : ImVec4(0.03f, 0.23f, 0.04f, 0.62f);
     if (ImGui::Button("Visuals", bWidth)) {
         Menu::tabSelected = 2;
@@ -176,12 +171,9 @@ void Menu::drawMenu() {
             Menu::drawLegitTab(); break;
         }
         case 1: {
-            Menu::drawRageTab(); break;
-        }
-        case 2: {
             Menu::drawVisualsTab(); break;
         }
-        case 3: {
+        case 2: {
             Menu::drawMiscTab();break;
         }
     }

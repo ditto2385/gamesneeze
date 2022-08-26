@@ -161,52 +161,6 @@ inline std::unordered_map<std::string_view, ConfigItem> config{
      CONFIGITEM("Legit>Misc>KillDelay", false), CONFIGITEM("Legit>Misc>KillDelayTime", 227),
      CONFIGITEM("Legit>Misc>TrustFacMeme", true),
      // }
-     // }
-     // RageBot {
-     // Default {
-     CONFIGITEM("Rage>Enabled", false), CONFIGITEM("Rage>RageBot>Default>Resolver", false),
-     CONFIGITEM("Rage>RageBot>Default>FOV", 0),
-     CONFIGITEM("Rage>RageBot>Default>ForceBaim", false),
-     CONFIGITEM("Rage>RageBot>Default>ForceBaimValue", 0),
-
-     CONFIGITEM("Rage>AntiAim>Type", 0), CONFIGITEM("Rage>AntiAim>Pitch", 89),
-     CONFIGITEM("Rage>AntiAim>Offset", 180), CONFIGITEM("Rage>AntiAim>FakeLag", 0),
-     // Static {
-     CONFIGITEM("Rage>AntiAim>Static>Desync", 0),
-     // }
-
-     // Jitter {
-     CONFIGITEM("Rage>AntiAim>Jitter>Desync", 0),
-     CONFIGITEM("Rage>AntiAim>Jitter>Jitter Amount", 0),
-     CONFIGITEM("Rage>AntiAim>Jitter>Jitter Delay", 1),
-     CONFIGITEM("Rage>AntiAim>Jitter>Random", false),
-     CONFIGITEM("Rage>AntiAim>Jitter>Random Min", 0),
-     CONFIGITEM("Rage>AntiAim>Jitter>Random Max", 0),
-     // }
-
-     // Fake Jitter {
-     CONFIGITEM("Rage>AntiAim>Fake Jitter>Jitter Amount", 0),
-     CONFIGITEM("Rage>AntiAim>Fake Jitter>Jitter Delay", 1),
-     CONFIGITEM("Rage>AntiAim>Fake Jitter>Random", false),
-     CONFIGITEM("Rage>AntiAim>Fake Jitter>Random Min", 0),
-     CONFIGITEM("Rage>AntiAim>Fake Jitter>Random Max", 0),
-     // }
-
-     // Real Jitter {
-     CONFIGITEM("Rage>AntiAim>Real Jitter>Jitter Amount", 0),
-     CONFIGITEM("Rage>AntiAim>Real Jitter>Jitter Delay", 1),
-     CONFIGITEM("Rage>AntiAim>Real Jitter>Random", false),
-     CONFIGITEM("Rage>AntiAim>Real Jitter>Random Min", 0),
-     CONFIGITEM("Rage>AntiAim>Real Jitter>Random Max", 0),
-     // }
-
-     // Spin {
-     CONFIGITEM("Rage>AntiAim>Spin>Desync", 0),
-     // }
-     CONFIGITEM("Rage>AntiAim>Slow Walk", false),
-     CONFIGITEM("Rage>AntiAim>Slow Walk Speed", 55),
-     //}
-     // }
      // Visuals {
      // ESP {
      CONFIGITEM("Visuals>Players>Enemies>Box", false),
