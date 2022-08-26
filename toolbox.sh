@@ -17,9 +17,9 @@ mkdir -p --mode=000 /tmp/dumps
 
 function unload {
     echo "Unloading cheat..."
-    echo 2 | sudo tee /proc/sys/kernel/yama/ptrace_scope
+    echo 2 | doas tee /proc/sys/kernel/yama/ptrace_scope
     if grep -q "$libname" "/proc/$csgo_pid/maps"; then
-        sudo $gdb -n -q -batch -ex "attach $csgo_pid" \
+        doas $gdb -n -q -batch -ex "attach $csgo_pid" \
             -ex "set \$dlopen = (void*(*)(char*, int)) dlopen" \
             -ex "set \$dlclose = (int(*)(void*)) dlclose" \
             -ex "set \$library = \$dlopen(\"/usr/lib/$libname\", 6)" \
@@ -33,10 +33,10 @@ function unload {
 
 function load {
     echo "Loading cheat..."
-    echo 2 | sudo tee /proc/sys/kernel/yama/ptrace_scope
-    sudo cp build/libgamesneeze.so /usr/lib/$libname
+    echo 2 | doas tee /proc/sys/kernel/yama/ptrace_scope
+    doas cp build/libgamesneeze.so /usr/lib/$libname
     gdbOut=$(
-      sudo $gdb -n -q -batch \
+      doas $gdb -n -q -batch \
       -ex "set auto-load safe-path /usr/lib/" \
       -ex "attach $csgo_pid" \
       -ex "set \$dlopen = (void*(*)(char*, int)) dlopen" \
@@ -54,16 +54,16 @@ function load {
 
 function load_debug {
     echo "Loading cheat..."
-    echo 2 | sudo tee /proc/sys/kernel/yama/ptrace_scope
-    sudo cp build/libgamesneeze.so /usr/lib/$libname
-    sudo $gdb -n -q -batch \
+    echo 2 | doas tee /proc/sys/kernel/yama/ptrace_scope
+    doas cp build/libgamesneeze.so /usr/lib/$libname
+    doas $gdb -n -q -batch \
         -ex "set auto-load safe-path /usr/lib:/usr/lib/" \
         -ex "attach $csgo_pid" \
         -ex "set \$dlopen = (void*(*)(char*, int)) dlopen" \
         -ex "call \$dlopen(\"/usr/lib/$libname\", 1)" \
         -ex "detach" \
         -ex "quit"
-    sudo $gdb -p "$csgo_pid"
+    doas $gdb -p "$csgo_pid"
     echo "Successfully loaded!"
 }
 
